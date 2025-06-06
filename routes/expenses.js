@@ -1,33 +1,21 @@
 const express = require('express');
-const router = express.Router();
-const db = require('../db');
+const Expense = require('../models/Expense');
+const auth = require('../middleware/auth');
 
-// GET all expenses
-router.get('/', async (req, res) => {
-  try {
-    const [rows] = await db.query('SELECT * FROM expenses ORDER BY id DESC');
-    res.json(rows);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+const router = express.Router();
+
+// Get all expenses for a user
+router.get('/', auth, async (req, res) => {
+  const expenses = await Expense.find({ user: req.userId }).sort({ createdAt: -1 });
+  res.json(expenses);
 });
 
-// POST new expense
-router.post('/', async (req, res) => {
+// Add expense
+router.post('/', auth, async (req, res) => {
   const { title, amount } = req.body;
-  if (!title || !amount) {
-    return res.status(400).json({ error: 'Title and amount are required' });
-  }
-
-  try {
-    const [result] = await db.query(
-      'INSERT INTO expenses (title, amount) VALUES (?, ?)',
-      [title, amount]
-    );
-    res.json({ id: result.insertId, title, amount });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+  const expense = new Expense({ title, amount, user: req.userId });
+  await expense.save();
+  res.status(201).json(expense);
 });
 
 module.exports = router;
