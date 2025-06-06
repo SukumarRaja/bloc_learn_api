@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Expense Tracker Backend</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+  * {
+    margin: 0; padding: 0; box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: #f6f7fb;
+    color: #333;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  header {
+    background: #fff;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  header h1 {
+    font-weight: 700;
+    font-size: 1.6rem;
+    color: #f97316;
+    letter-spacing: 1px;
+  }
+
+  nav a {
+    color: #555;
+    text-decoration: none;
+    font-weight: 600;
+    margin-left: 30px;
+    transition: color 0.3s ease;
+    font-size: 1rem;
+  }
+  nav a:hover {
+    color: #f97316;
+  }
+
+  main {
+    flex: 1;
+    max-width: 1000px;
+    margin: 40px auto 20px;
+    padding: 0 20px;
+  }
+
+  /* Running banner */
+  .running-banner {
+    background: #f97316;
+    color: white;
+    font-weight: 700;
+    padding: 10px 0;
+    font-size: 1rem;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .running-banner span {
+    display: inline-block;
+    padding-left: 100%;
+    animation: marquee 30s linear infinite; /* slower scroll */
+  }
+  @keyframes marquee {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+  }
+
+
+  .hero {
+    text-align: center;
+    margin-bottom: 60px;
+  }
+
+  .hero h2 {
+    font-size: 2.8rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: #111;
+  }
+
+  .hero p {
+    font-size: 1.15rem;
+    color: #555;
+    max-width: 600px;
+    margin: 0 auto 30px;
+    line-height: 1.6;
+  }
+
+  .btn-group {
+    display: inline-flex;
+    gap: 20px;
+  }
+
+  .btn {
+    background: #f97316;
+    color: #fff;
+    padding: 14px 40px;
+    font-weight: 700;
+    font-size: 1rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .btn:hover {
+    background: #dc6803;
+  }
+
+  .features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* fixed 3 columns */
+    gap: 40px;
+    margin-bottom: 60px;
+  }
+
+  .feature-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 30px 25px;
+    box-shadow: 0 10px 20px rgba(249, 115, 22, 0.15);
+    transition: box-shadow 0.3s ease;
+  }
+
+  .feature-card:hover {
+    box-shadow: 0 15px 35px rgba(249, 115, 22, 0.3);
+  }
+
+  .feature-card h3 {
+    color: #f97316;
+    font-weight: 700;
+    margin-bottom: 15px;
+    font-size: 1.25rem;
+  }
+
+  .feature-card p {
+    font-size: 1rem;
+    color: #666;
+    line-height: 1.5;
+  }
+
+  /* App Store Section */
+  .app-stores {
+    text-align: center;
+    margin-bottom: 60px;
+  }
+
+  .app-stores h3 {
+    font-weight: 700;
+    font-size: 1.8rem;
+    color: #f97316;
+    margin-bottom: 20px;
+  }
+
+  .app-store-badges {
+    display: inline-flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .app-store-badges a {
+    display: inline-block;
+    width: 150px;
+    height: 50px;
+    background: #ddd;
+    border-radius: 12px;
+    line-height: 50px;
+    font-weight: 600;
+    color: #555;
+    text-decoration: none;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: background 0.3s ease, color 0.3s ease;
+    user-select: none;
+    position: relative;
+  }
+
+  .app-store-badges a::after {
+    content: 'Coming Soon';
+    font-size: 0.7rem;
+    color: #f97316;
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    font-weight: 700;
+  }
+
+  .app-store-badges a:hover {
+    background: #f97316;
+    color: #fff;
+    box-shadow: 0 5px 15px rgba(249,115,22,0.7);
+  }
+
+  /* Ads Section */
+  .ads-section {
+    max-width: 1000px;
+    margin: 0 auto 60px;
+  }
+
+  .ads-section h3 {
+    font-weight: 700;
+    font-size: 1.8rem;
+    color: #f97316;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .ads-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+  }
+
+  .ad-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 10px 20px rgba(249, 115, 22, 0.1);
+    transition: box-shadow 0.3s ease;
+    text-align: center;
+  }
+
+  .ad-card:hover {
+    box-shadow: 0 15px 35px rgba(249, 115, 22, 0.3);
+  }
+
+  .ad-card img {
+    max-width: 100%;
+    border-radius: 8px;
+    margin-bottom: 10px;
+  }
+
+  .ad-card p {
+    font-weight: 600;
+    color: #f97316;
+    font-size: 1rem;
+  }
+
+  /* Footer */
+  footer {
+    background: #222;
+    color: #ccc;
+    padding: 40px 20px 20px;
+    font-size: 0.9rem;
+  }
+
+  footer .footer-content {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 30px;
+  }
+
+  footer .footer-section {
+    flex: 1 1 220px;
+  }
+
+  footer h4 {
+    color: #f97316;
+    font-weight: 700;
+    margin-bottom: 15px;
+  }
+
+  footer a {
+    color: #ccc;
+    text-decoration: none;
+    display: block;
+    margin-bottom: 10px;
+    transition: color 0.3s ease;
+  }
+
+  footer a:hover {
+    color: #f97316;
+  }
+
+  footer .social-icons a {
+    display: inline-block;
+    margin-right: 15px;
+    color: #ccc;
+    font-size: 1.4rem;
+    transition: color 0.3s ease;
+  }
+
+  footer .social-icons a:hover {
+    color: #f97316;
+  }
+
+  footer .footer-bottom {
+    text-align: center;
+    margin-top: 30px;
+    border-top: 1px solid #444;
+    padding-top: 20px;
+    font-size: 0.85rem;
+    color: #999;
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    header {
+      padding: 15px 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    nav a {
+      margin-left: 15px;
+      font-size: 0.9rem;
+    }
+    .hero h2 {
+      font-size: 2rem;
+    }
+    .btn {
+      padding: 12px 30px;
+      font-size: 0.9rem;
+    }
+    footer .footer-content {
+      flex-direction: column;
+      align-items: center;
+      gap: 40px;
+    }
+  }
+    /* Responsive fallback */
+    @media (max-width: 900px) {
+    .features {
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+  }
+  .store-links {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.store-links a img {
+  height: 60px;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.store-links a:hover img {
+  transform: scale(1.05);
+}
+</style>
+<!-- FontAwesome CDN for social icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+
+<header>
+  <h1>Expense Tracker</h1>
+  <nav>
+    <a href="#features">Features</a>
+    <a href="#app-stores">App</a>
+    <a href="/api/auth/login">Login</a>
+    <a href="/api/auth/signup">Sign Up</a>
+  </nav>
+</header>
+
+<!-- Running Announcement Banner -->
+<div class="running-banner" aria-label="Announcement">
+  <span>🚀 New feature coming soon: Advanced analytics dashboard! Stay tuned. &nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp; Track expenses faster with bulk upload &nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp; Mobile app launching Q3 2025!</span>
+</div>
+
+<main>
+  <section class="hero">
+    <h2>Manage Your Expenses Effortlessly</h2>
+    <p>Secure user authentication with JWT & refresh tokens, MongoDB-backed expense tracking, and easy-to-use RESTful APIs.</p>
+    <div class="btn-group">
+      <a href="/api/auth/login" class="btn">Login</a>
+      <a href="/api/auth/signup" class="btn">Sign Up</a>
+    </div>
+  </section>
+
+  <section id="features" class="features" aria-label="Features">
+    <div class="feature-card" tabindex="0">
+      <h3>Secure Authentication</h3>
+      <p>Robust JWT and refresh token support to keep your sessions safe and seamless.</p>
+    </div>
+    <div class="feature-card" tabindex="0">
+      <h3>User-Specific Data</h3>
+      <p>Every user's expenses are isolated and protected with role-based access.</p>
+    </div>
+    <div class="feature-card" tabindex="0">
+      <h3>MongoDB Backend</h3>
+      <p>Efficient NoSQL storage that scales as you track more expenses.</p>
+    </div>
+    <div class="feature-card" tabindex="0">
+      <h3>REST API Endpoints</h3>
+      <p>Clean and simple API routes for managing your expenses and user data.</p>
+    </div>
+    <div class="feature-card" tabindex="0">
+      <h3>Refresh Token Flow</h3>
+      <p>Automatic token renewal ensures you stay logged in without compromising security.</p>
+    </div>
+    <div class="feature-card" tabindex="0">
+      <h3>Easy Integration</h3>
+      <p>Integrate with any frontend or mobile app using straightforward REST APIs.</p>
+    </div>
+  </section>
+
+<!-- App Stores Section -->
+<section class="app-stores">
+    <h2>Get the Expense Tracker App</h2>
+    <div class="store-links">
+      <a href="#" target="_blank" aria-label="Google Play Store">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Get it on Google Play" />
+      </a>
+      <a href="#" target="_blank" aria-label="Apple App Store">
+        <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="Download on the App Store" />
+      </a>
+    </div>
+  </section>
+
+  <section class="ads-section" aria-label="Advertisements">
+    <h3>Sponsored</h3>
+    <div class="ads-grid">
+      <div class="ad-card" tabindex="0">
+        <img src="https://via.placeholder.com/300x150?text=Ad+1" alt="Advertisement 1" />
+        <p>Boost your productivity with XYZ Finance Tools!</p>
+      </div>
+      <div class="ad-card" tabindex="0">
+        <img src="https://via.placeholder.com/300x150?text=Ad+2" alt="Advertisement 2" />
+        <p>Get 50% off on Pro Expense Analytics - Limited time offer.</p>
+      </div>
+      <div class="ad-card" tabindex="0">
+        <img src="https://via.placeholder.com/300x150?text=Ad+3" alt="Advertisement 3" />
+        <p>Secure your financial data with ABC Security Suite.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="footer-content">
+    <div class="footer-section">
+      <h4>Product</h4>
+      <a href="#features">Features</a>
+      <a href="#app-stores">Mobile App</a>
+      <a href="/api/auth/login">Login</a>
+      <a href="/api/auth/signup">Sign Up</a>
+    </div>
+    <div class="footer-section">
+      <h4>Company</h4>
+      <a href="#">About Us</a>
+      <a href="#">Careers</a>
+      <a href="#">Contact</a>
+      <a href="#">Blog</a>
+    </div>
+    <div class="footer-section">
+      <h4>Support</h4>
+      <a href="#">Help Center</a>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+    </div>
+    <div class="footer-section social-icons" aria-label="Social Media">
+      <h4>Follow Us</h4>
+      <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+      <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+      <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+      <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    &copy; 2025 Expense Tracker. All rights reserved.
+  </div>
+</footer>
+
+</body>
+</html>
